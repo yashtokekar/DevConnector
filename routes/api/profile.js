@@ -72,6 +72,7 @@ router.post('/', [
         if(skills) {
             profileFields.skills = skills.split(',').map(skill => skill.trim());
         }
+        
         //Build social object
         profileFields.social = {};
         if(youtube) profileFields.social.youtube = youtube;
@@ -86,6 +87,7 @@ router.post('/', [
             if(profile){
                 //Update
                 profile = await Profile.findOneAndUpdate({ user: req.user.id }, { $set: profileFields }, { new: true });
+                
 
                 return res.json(profile);
             }
