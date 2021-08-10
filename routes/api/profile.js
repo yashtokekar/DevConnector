@@ -37,9 +37,11 @@ router.post('/', [
          check('status', 'Status is required').not().isEmpty(),
          check('skills', 'Skills is required').not().isEmpty() 
     ]
+    
 
     ], 
      async (req,res) => {
+
          const errors = validationResult(req);
 
          if(!errors.isEmpty()) {
@@ -61,11 +63,27 @@ router.post('/', [
             facebook
         } = req.body;
 
+        const checkUrl = (url) => {
+            if (!/^(f|ht)tps?:\/\//i.test(url)) {
+              url = 'https://' + url;
+            }
+            return url.toString();
+          };
+       
+         const websiteUrl = checkUrl(website);
+         const twitterUrl = checkUrl(twitter);
+         const youtubeUrl = checkUrl(youtube);
+         const facebookUrl = checkUrl(facebook);
+         const linkedinUrl = checkUrl(linkedin);
+         const instagramUrl = checkUrl(instagram);
+
+        
+
         //Build profile objects
         const profileFields = {};
         profileFields.user = req.user.id;
         if(company) profileFields.company = company;
-        if(website) profileFields.website = website;
+        if(website) profileFields.website = websiteUrl;
         if(location) profileFields.location = location;
         if(bio) profileFields.bio = bio;
         if(githubusername) profileFields.githubusername = githubusername;
@@ -76,11 +94,11 @@ router.post('/', [
         
         //Build social object
         profileFields.social = {};
-        if(youtube) profileFields.social.youtube = youtube;
-        if(twitter) profileFields.social.twitter = twitter;
-        if(facebook) profileFields.social.facebook = facebook;
-        if(linkedin) profileFields.social.linkedin = linkedin;
-        if(instagram) profileFields.social.instagram = instagram;
+        if(youtube) profileFields.social.youtube = youtubeUrl;
+        if(twitter) profileFields.social.twitter = twitterUrl;
+        if(facebook) profileFields.social.facebook = facebookUrl;
+        if(linkedin) profileFields.social.linkedin = linkedinUrl;
+        if(instagram) profileFields.social.instagram = instagramUrl;
 
         try{
             let profile = await Profile.findOne({ user: req.user.id });
